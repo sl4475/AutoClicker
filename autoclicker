@@ -1,0 +1,69 @@
+#!/usr/bin/env python2
+import tkinter
+from pynput.mouse import Button, Controller
+from time import sleep
+import threading
+#import keyboard
+import sys
+TK_SILENCE_DEPRECATION=1
+
+class AutoClicker: 
+      
+    def __init__(self): 
+        self._loopOn = False
+        
+    def endThread(self): 
+        print('setting loopOn to False')
+        self._loopOn = False
+      #  print('sys.exit() fast')
+        #sys.exit()
+
+    def clickLoop(self):
+        self._loopOn = True
+        mouse = Controller()
+        try:
+            sleepInterval = 2
+            sleep(sleepInterval)
+            while self._loopOn:
+                print('click')
+                mouse.click(Button.left, 1)
+                sleep(sleepInterval)
+            print('sys.exit()')
+            sys.exit()
+        except KeyboardInterrupt:
+            print("KeyBoard Interrupt")
+            sys.exit()
+
+    def getOn(self):
+        return self._loopOn
+
+
+def makeThread(ac):
+    if not ac.getOn():
+        print('Start Thread Clicked')
+        thread = threading.Thread(target = ac.clickLoop).start()
+    else: 
+        print('Thread already started')
+
+def stopThread(ac):
+    if ac.getOn():
+        print('Stop Thread Clicked')
+        ac.endThread()
+    else:
+        print('Thread is not active')
+
+
+
+
+ac = AutoClicker()
+root = tkinter.Tk()
+root.title("AutoClicker")
+root.geometry("200x200")
+
+Start = tkinter.Button(root, text ="Start", command = lambda: makeThread(ac) )
+Stop = tkinter.Button(root, text ="Stop", command = lambda: stopThread(ac) )
+
+Start.pack()
+Stop.pack()
+root.mainloop()
+
